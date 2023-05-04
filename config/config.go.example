@@ -1,0 +1,29 @@
+package config
+
+// Server
+const (
+	Environtment = "develop" // develop, production
+)
+
+// Gorm
+const (
+	Source         = "mysql"
+	SourceUser     = ""
+	SourcePassword = ""
+	SourceHost     = ""
+	SourcePort     = "3306"
+	SourceDataBase = ""
+)
+
+// Redis
+const (
+	RedisHost     = "redis"
+	RedisPassword = ""
+	RedisPort     = 6379
+)
+
+// JWT
+const (
+	JWTttl       = 900
+	JWTSecretKey = "learnGolangJWTToken"
+)

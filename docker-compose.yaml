@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  server:
+    container_name: "${PROJECT_NAME}-todolist-aws"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - type: bind
+        source: .
+        target: /var/www/app/go-todolist-aws
+    ports:
+      - target: 9753
+        published: ${SERVER_PORT:-9753}
+        protocol: tcp
+        mode: host
+    depends_on:
+      - db
+  db:
+    container_name: "${PROJECT_NAME}-aws-db"
+    image: mysql:8.0
+    ports:
+      - target: 3306
+        published: ${DB_PORT:-3306}
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+    environment:
+      - MYSQL_DATABASE=${DB_NAME:-golang_aws_db}
+      - MYSQL_USER=${DB_USER:-user}
+      - MYSQL_PASSWORD=${DB_PASS:-password}
+      - MYSQL_ROOT_PASSWORD=${DB_PASS:-password}
+  redis:
+    container_name: "${PROJECT_NAME}-aws-redis"
+    image: redis:6.2
+    ports:
+      - target: 6379
+        published: ${REDIS_PORT:-6379}
+        protocol: tcp
+        mode: host
+volumes:
+  db-store:
