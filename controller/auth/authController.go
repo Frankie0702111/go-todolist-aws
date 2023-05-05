@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
 )
 
@@ -24,10 +23,10 @@ type authcontroller struct {
 	JwtService  jwtService.JwtService
 }
 
-func New(db *gorm.DB, rdb *redis.Client) AuthController {
+func New(db *gorm.DB) AuthController {
 	return &authcontroller{
 		AuthService: authService.New(db),
-		JwtService:  jwtService.New(rdb),
+		JwtService:  jwtService.New(),
 	}
 }
 

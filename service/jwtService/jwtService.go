@@ -43,10 +43,5 @@ func (s *jwtService) GenerateToken(userID uint64, t time.Time) string {
 		return ""
 	}
 
-	// _, setRedisErr := s.RedisRepository.Set("token"+strconv.FormatUint(userID, 10), token, time.Duration(config.JWTttl)*time.Second)
-	// if setRedisErr != nil {
-	// 	log.Error("Failed to set the token in redis : " + setRedisErr.Error())
-	// }
-
 	return token
 }

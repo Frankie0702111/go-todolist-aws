@@ -5,7 +5,6 @@ import (
 	"go-todolist-aws/config"
 
 	"go-todolist-aws/utils/log"
-	"os"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -14,11 +13,6 @@ import (
 )
 
 func InitMySQL() (*gorm.DB, error) {
-	// Check config file is exist
-	if _, configErr := os.Stat("config/config.go"); configErr != nil {
-		panic("config.go file is not exist!")
-	}
-
 	// Create the connection string
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.SourceUser, config.SourcePassword, config.SourceHost, config.SourcePort, config.SourceDataBase)
 
@@ -57,7 +51,7 @@ func Close(db *gorm.DB) {
 	dbSQL, err := db.DB()
 
 	if err != nil {
-		log.Panic("Failed to close connection form database : " + err.Error())
+		log.Error("Failed to close connection form database : " + err.Error())
 	}
 
 	// Close the database connection
