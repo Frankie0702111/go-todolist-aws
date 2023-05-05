@@ -22,3 +22,4 @@ go.work
 .env
 log/*.log
 config/config.go
+tmp/

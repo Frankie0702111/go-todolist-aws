@@ -10,5 +10,5 @@ migrate-down:
 	$(DOCKER) migrate -database "${DB}://${DB_USER}:${DB_PASS}@tcp(db:3306)/${DB_NAME}" -path ./migrations down $(number)
 
 build:
-	GOOS=linux GOARCH=arm64 go build -o bootstrap .
-	zip bootstrap.zip bootstrap
+	GOOS=linux GOARCH=arm64 go build -o bootstrap main.go
+	zip -D -j -r bootstrap.zip bootstrap
