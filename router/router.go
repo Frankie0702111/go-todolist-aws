@@ -7,6 +7,15 @@ func Default() *gin.Engine {
 
 	router := gin.New()
 
+	test := router.Group("api/v1/test")
+	{
+		test.GET("/", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "Test success.",
+			})
+		})
+	}
+
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
