@@ -23,3 +23,5 @@ go.work
 log/*.log
 config/config.go
 tmp/
+bootstrap
+bootstrap.*

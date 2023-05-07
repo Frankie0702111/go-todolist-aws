@@ -1,10 +1,5 @@
 package config
 
-// Server
-const (
-	Environtment = "develop" // develop, production
-)
-
 // Gorm
 const (
 	Source         = "mysql"
