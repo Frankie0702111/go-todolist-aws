@@ -2,7 +2,7 @@ package jwtService
 
 import (
 	"go-todolist-aws/config"
-	"go-todolist-aws/utils/log"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -26,7 +26,7 @@ func getSecretKey() string {
 	return secretKey
 }
 
-func (s *jwtService) GenerateToken(userID uint64, t time.Time) string {
+func (s *jwtService) GenerateToken(userID uint64, t time.Time) (string, error) {
 	claims := &jwtCustomClaim{
 		userID,
 		jwt.RegisteredClaims{
@@ -39,9 +39,13 @@ func (s *jwtService) GenerateToken(userID uint64, t time.Time) string {
 	generateToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := generateToken.SignedString([]byte(s.secretKey))
 	if err != nil {
-		log.Error("Failed to process request : Signature failed")
-		return ""
+		return "", err
 	}
 
-	return token
+	_, setRedisErr := s.RedisRepository.Set("token"+strconv.FormatUint(userID, 10), token, time.Duration(config.JWTttl)*time.Second)
+	if setRedisErr != nil {
+		return "", setRedisErr
+	}
+
+	return token, nil
 }

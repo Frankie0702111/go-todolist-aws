@@ -14,14 +14,19 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
 # Go workspace file
 go.work
+
+# Dependency directories (remove the comment below to include it)
 .env
-log/*.log
+config/*.pem
 config/config.go
-tmp/
+vendor/
 bootstrap
 bootstrap.*
+
+# Error log
+log/*.log
+
+# Live reload
+tmp/

@@ -19,9 +19,6 @@ const (
 	FailedToLogout                         = 401004
 	RecordNotFound                         = 401005
 	TooManyRequests                        = 429001
-
-	// 5xx
-	SignatureFailed = 500001
 )
 
 var (
@@ -42,9 +39,6 @@ var (
 		401004: "Failed to logout.",
 		401005: "Record not found.",
 		429001: "Too many requests.",
-
-		// 5xx
-		500001: "Signature failed.",
 	}
 )
 
