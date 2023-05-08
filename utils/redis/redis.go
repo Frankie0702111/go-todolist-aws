@@ -3,13 +3,13 @@ package redis
 import (
 	"fmt"
 	"go-todolist-aws/config"
-	"log"
+	"go-todolist-aws/utils/log"
 
 	"github.com/go-redis/redis/v8"
 )
 
 func InitRedis() (*redis.Client, error) {
-	log.Println("Testing Golang Redis")
+	log.Info("Testing Golang Redis")
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:6379", config.RedisHost),

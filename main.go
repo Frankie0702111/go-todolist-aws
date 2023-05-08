@@ -6,6 +6,7 @@ import (
 	"go-todolist-aws/router/categoryRouter"
 	"go-todolist-aws/utils/gorm"
 	"go-todolist-aws/utils/log"
+	"go-todolist-aws/utils/redis"
 	"net/http"
 	"os"
 
@@ -20,10 +21,15 @@ func main() {
 		return
 	}
 
+	rdb, rerr := redis.InitRedis()
+	if rerr != nil {
+		log.Error(rerr)
+	}
+
 	defer gorm.Close(db)
 
 	r := router.Default()
-	r = authRouter.GetRoute(r, db)
+	r = authRouter.GetRoute(r, db, rdb)
 	r = categoryRouter.GetRoute(r, db)
 
 	if mode == "release" {

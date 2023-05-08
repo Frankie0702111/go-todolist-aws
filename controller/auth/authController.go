@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
 )
 
@@ -18,19 +19,19 @@ type AuthController interface {
 	Login(ctx *gin.Context)
 }
 
-type authcontroller struct {
+type authController struct {
 	AuthService authService.AuthService
 	JwtService  jwtService.JwtService
 }
 
-func New(db *gorm.DB) AuthController {
-	return &authcontroller{
+func New(db *gorm.DB, rdb *redis.Client) AuthController {
+	return &authController{
 		AuthService: authService.New(db),
-		JwtService:  jwtService.New(),
+		JwtService:  jwtService.New(rdb),
 	}
 }
 
-func (c *authcontroller) Login(ctx *gin.Context) {
+func (c *authController) Login(ctx *gin.Context) {
 	input := &authRequest.LoginRequest{}
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		response := response.ErrorsResponse(http.StatusBadRequest, "Failed to process request", err.Error(), nil)
@@ -40,9 +41,9 @@ func (c *authcontroller) Login(ctx *gin.Context) {
 
 	loginResult := c.AuthService.VerifyCredential(input.Email, input.Password)
 	if v, ok := loginResult.(model.User); ok {
-		generatedToken := c.JwtService.GenerateToken(v.ID, time.Now().Add(time.Duration(config.JWTttl)*time.Second))
-		if len(generatedToken) < 1 {
-			response := response.ErrorsResponseByCode(http.StatusInternalServerError, "Failed to process request", response.SignatureFailed, nil)
+		generatedToken, generatedTokenErr := c.JwtService.GenerateToken(v.ID, time.Now().Add(time.Duration(config.JWTttl)*time.Second))
+		if generatedTokenErr != nil {
+			response := response.ErrorsResponse(http.StatusInternalServerError, "Failed to process request", generatedTokenErr.Error(), nil)
 			ctx.JSON(http.StatusInternalServerError, response)
 			return
 		}

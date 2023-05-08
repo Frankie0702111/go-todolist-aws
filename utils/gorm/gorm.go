@@ -3,7 +3,6 @@ package gorm
 import (
 	"fmt"
 	"go-todolist-aws/config"
-
 	"go-todolist-aws/utils/log"
 	"time"
 
