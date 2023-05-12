@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	messages = map[int]string{
+	Messages = map[int]string{
 		// 4xx
 		400001: "No token found.",
 		400002: "Bearer token not in proper format.",
@@ -31,8 +31,8 @@ var (
 		400005: "Email not exists.",
 		400006: "Failed to get state token.",
 		400007: "ID Invalid.",
-		400008: "Image file name limit of 100",
-		400009: "Image file size limit of 5 MB",
+		400008: "Image file name limit of 100.",
+		400009: "Image file size limit of 5 MB.",
 		401001: "Token does not exist or expired.",
 		401002: "Invalid credential.",
 		401003: "Token contains an invalid number of segments.",
@@ -105,7 +105,7 @@ func ErrorsResponseByCode(code int, message string, errCode int, data interface{
 	return Response{
 		Code:    code,
 		Message: message,
-		Errors:  messages[errCode],
+		Errors:  Messages[errCode],
 		Data:    data,
 	}
 }

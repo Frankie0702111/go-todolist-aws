@@ -27,6 +27,7 @@ func main() {
 	}
 
 	defer gorm.Close(db)
+	defer redis.Close(rdb)
 
 	r := router.Default()
 	r = authRouter.GetRoute(r, db, rdb)

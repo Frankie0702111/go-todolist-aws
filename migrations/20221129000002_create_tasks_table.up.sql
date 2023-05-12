@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `is_specify_time`   bool          NULL      DEFAULT false   COMMENT '是否指定時間',
   `priority`          tinyint       NOT NULL  DEFAULT 1       COMMENT '1:低 2:中 3:高',
   `is_complete`       bool          NOT NULL  DEFAULT false   COMMENT '是否完成',
-  `is_notify`         tinyint       NOT NULL  DEFAULT 0       COMMENT '0:未通知, 1:Telegram已通知, 2:網頁已通知',
+  `is_notify`         tinyint       NOT NULL  DEFAULT 0       COMMENT '0:未通知, 1:已通知',
   `created_at`        timestamp     NOT NULL  DEFAULT NOW()   COMMENT '新增時間',
   `updated_at`        timestamp     NOT NULL  DEFAULT NOW()   COMMENT '更新時間'
 );

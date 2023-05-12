@@ -5,9 +5,15 @@ const (
 	Source         = "mysql"
 	SourceUser     = ""
 	SourcePassword = ""
-	SourceHost     = ""
+	SourceHost     = "db"
 	SourcePort     = "3306"
-	SourceDataBase = ""
+	SourceDataBase = "golang_aws_db"
+)
+
+// Test Gorm
+const (
+	TestSourceHost = "127.0.0.1"
+	TestSourcePort = "3308" // This port is docker out port
 )
 
 // Redis

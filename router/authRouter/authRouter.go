@@ -10,7 +10,11 @@ import (
 
 func GetRoute(r *gin.Engine, db *gorm.DB, rdb *redis.Client) *gin.Engine {
 	controller := auth.New(db, rdb)
-	r.Group("api/v1/auth/login").POST("/", controller.Login)
+	v1 := r.Group("api/v1/auth")
+	{
+		v1.POST("/login", controller.Login)
+		v1.POST("/register", controller.Register)
+	}
 
 	return r
 }

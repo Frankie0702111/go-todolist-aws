@@ -8,7 +8,7 @@ RUN go install github.com/cosmtrek/air@v1.40.4; \
     go install github.com/swaggo/swag/cmd/swag@v1.6.0
 
 # Copy the local file/directory to the specified location in the image file
-COPY ./go.mod ./go.sum ./
+COPY ../../go.mod ../../go.sum ./
 
 RUN go mod download
 
