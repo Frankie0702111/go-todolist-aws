@@ -25,12 +25,73 @@ func setUp(t *testing.T) {
 	}
 }
 
-func TestCreateUser_Success(t *testing.T) {
+func TestVerifyCredential_Success(t *testing.T) {
 	setUp(t)
 
 	user := model.User{
 		Username: "Test123",
 		Email:    "test123@test.com",
+		Password: "password",
+	}
+	createUser := db.Create(&user)
+	assert.NoError(t, createUser.Error)
+
+	r := authRepository.New(db)
+
+	res := r.VerifyCredential(user.Email)
+	assert.NotNil(t, res)
+	assert.Equal(t, user.Email, res.(model.User).Email)
+
+	// Cleanup: Delete user from database
+	createUser = db.Delete(&user)
+	assert.NoError(t, createUser.Error)
+}
+
+// Test for an invalid credential
+func TestVerifyCredential_Failed(t *testing.T) {
+	setUp(t)
+
+	r := authRepository.New(db)
+	res := r.VerifyCredential("invalid@example.com")
+	assert.Nil(t, res)
+}
+
+func TestFindByEmail_Success(t *testing.T) {
+	setUp(t)
+
+	user := model.User{
+		Username: "Test456",
+		Email:    "test456@test.com",
+		Password: "password",
+	}
+	createUser := db.Create(&user)
+	assert.NoError(t, createUser.Error)
+
+	r := authRepository.New(db)
+
+	res, _ := r.FindByEmail(user.Email)
+	assert.Equal(t, user.Email, res.Email)
+
+	// Cleanup: Delete user from database
+	createUser = db.Delete(&user)
+	assert.NoError(t, createUser.Error)
+}
+
+// Test for an invalid email
+func TestFindByEmail_Failed(t *testing.T) {
+	setUp(t)
+
+	r := authRepository.New(db)
+	res := r.VerifyCredential("invalid@example.com")
+	assert.Nil(t, res)
+}
+
+func TestCreateUser_Success(t *testing.T) {
+	setUp(t)
+
+	user := model.User{
+		Username: "Test789",
+		Email:    "test789@test.com",
 		Password: "password",
 	}
 	r := authRepository.New(db)
@@ -56,35 +117,4 @@ func TestCreateUser_Failed(t *testing.T) {
 	r := authRepository.New(db)
 	_, createUserErr := r.CreateUser(user)
 	assert.Error(t, createUserErr)
-}
-
-func TestVerifyCredential_Success(t *testing.T) {
-	setUp(t)
-
-	user := model.User{
-		Username: "Test456",
-		Email:    "test456@test.com",
-		Password: "password",
-	}
-	createUser := db.Create(&user)
-	assert.NoError(t, createUser.Error)
-
-	r := authRepository.New(db)
-
-	res := r.VerifyCredential(user.Email)
-	assert.NotNil(t, res)
-	assert.Equal(t, user.Email, res.(model.User).Email)
-
-	// Cleanup: Delete user from database
-	createUser = db.Delete(&user)
-	assert.NoError(t, createUser.Error)
-}
-
-// Test for an invalid credential
-func TestVerifyCredential_Failed(t *testing.T) {
-	setUp(t)
-
-	r := authRepository.New(db)
-	res := r.VerifyCredential("invalid@example.com")
-	assert.Nil(t, res)
 }
