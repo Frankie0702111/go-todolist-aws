@@ -5,7 +5,7 @@ services:
     container_name: "${PROJECT_NAME}-todolist-aws"
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/golang/Dockerfile
     volumes:
       - type: bind
         source: .
@@ -19,7 +19,9 @@ services:
       - db
   db:
     container_name: "${PROJECT_NAME}-aws-db"
-    image: mysql:8.0
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
     ports:
       - target: 3306
         published: ${DB_PORT:-3306}
@@ -35,6 +37,8 @@ services:
       - MYSQL_DATABASE=${DB_NAME:-golang_aws_db}
       - MYSQL_USER=${DB_USER:-user}
       - MYSQL_PASSWORD=${DB_PASS:-password}
+      - MYSQLCHARSET=${DB_CHARSET:-utf8mb4}
+      - MYSQL_COLLATION=${DB_COLLATION:-utf8mb4_unicode_ci}
       - MYSQL_ROOT_PASSWORD=${DB_PASS:-password}
   redis:
     container_name: "${PROJECT_NAME}-aws-redis"

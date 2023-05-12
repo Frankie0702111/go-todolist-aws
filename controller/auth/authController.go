@@ -17,6 +17,7 @@ import (
 
 type AuthController interface {
 	Login(ctx *gin.Context)
+	Register(ctx *gin.Context)
 }
 
 type authController struct {
@@ -35,7 +36,7 @@ func (c *authController) Login(ctx *gin.Context) {
 	input := &authRequest.LoginRequest{}
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		response := response.ErrorsResponse(http.StatusBadRequest, "Failed to process request", err.Error(), nil)
-		ctx.JSON(http.StatusOK, response)
+		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -53,4 +54,29 @@ func (c *authController) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response)
 		return
 	}
+}
+
+func (c *authController) Register(ctx *gin.Context) {
+	input := authRequest.RegisterRequest{}
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		response := response.ErrorsResponse(http.StatusBadRequest, "Failed to process request", err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	createUser, err := c.AuthService.CreateUser(input)
+	if err != nil {
+		if err.Error() == response.Messages[response.EmailAlreadyExists] {
+			response := response.ErrorsResponseByCode(http.StatusInternalServerError, "Failed to process request", response.EmailAlreadyExists, nil)
+			ctx.JSON(http.StatusInternalServerError, response)
+			return
+		}
+		response := response.ErrorsResponse(http.StatusInternalServerError, "Failed to process request", err.Error(), nil)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := response.SuccessResponse(http.StatusOK, "Register successfully", createUser)
+	ctx.JSON(http.StatusOK, response)
+	return
 }
