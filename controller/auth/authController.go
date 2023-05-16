@@ -54,6 +54,10 @@ func (c *authController) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response)
 		return
 	}
+
+	response := response.ErrorsResponseByCode(http.StatusUnauthorized, "Failed to process request", response.InvalidCredential, nil)
+	ctx.JSON(http.StatusUnauthorized, response)
+	return
 }
 
 func (c *authController) Register(ctx *gin.Context) {
