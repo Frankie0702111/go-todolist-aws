@@ -18,7 +18,7 @@ var (
 )
 
 func setUp(t *testing.T) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s_test?charset=utf8mb4&parseTime=True&loc=Local", config.SourceUser, config.SourcePassword, config.TestSourceHost, config.TestSourcePort, config.SourceDataBase)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s_test?charset=utf8mb4&parseTime=True&loc=Local", config.SourceUser, config.SourcePassword, config.TestSourceHost1, config.TestSourcePort1, config.SourceDataBase)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("Failed to connect database: %v", err)
@@ -42,7 +42,6 @@ func TestVerifyCredential_Success(t *testing.T) {
 	assert.NotNil(t, res)
 	assert.Equal(t, user.Email, res.(model.User).Email)
 
-	// Cleanup: Delete user from database
 	createUser = db.Delete(&user)
 	assert.NoError(t, createUser.Error)
 }
@@ -72,7 +71,6 @@ func TestFindByEmail_Success(t *testing.T) {
 	res, _ := r.FindByEmail(user.Email)
 	assert.Equal(t, user.Email, res.Email)
 
-	// Cleanup: Delete user from database
 	createUser = db.Delete(&user)
 	assert.NoError(t, createUser.Error)
 }

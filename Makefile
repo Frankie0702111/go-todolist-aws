@@ -20,6 +20,8 @@ migrate-test-down:
 go-test:
 	make migrate-test-up;
 	go test -v repository/authRepository/authRepository_test.go;
+	go test -v service/authService/authService_test.go;
+	go test -v controller/auth/authController_test.go
 	make migrate-test-down;
 
 # Compilation project
