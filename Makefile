@@ -1,6 +1,7 @@
 include .env
 
 DOCKER = docker compose exec server
+YMD = _$$(date +'%Y%m%d')
 number :=
 
 # General DB structure
@@ -19,9 +20,10 @@ migrate-test-down:
 # Unit test
 go-test:
 	make migrate-test-up;
-	go test -v repository/authRepository/authRepository_test.go;
-	go test -v service/authService/authService_test.go;
-	go test -v controller/auth/authController_test.go
+	go test -v repository/authRepository/authRepository_test.go -json > ./log/authRepository_test$(YMD).log;
+	go test -v service/authService/authService_test.go -json > ./log/authService_test$(YMD).log;
+	go test -v service/jwtService/jwtService_test.go -json > ./log/jwtService_test$(YMD).log;
+	go test -v controller/auth/authController_test.go -json > ./log/authController_test$(YMD).log;
 	make migrate-test-down;
 
 # Compilation project
