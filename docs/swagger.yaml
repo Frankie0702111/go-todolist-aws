@@ -1,0 +1,184 @@
+basePath: /api/v1
+definitions:
+  authRequest.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  authRequest.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      errors:
+        type: object
+      message:
+        type: string
+    type: object
+host: localhost:9753
+info:
+  contact: {}
+  description: AWS lambda API
+  license: {}
+  title: Go-ToDoList AWS System API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      parameters:
+      - description: User Login
+        in: body
+        name: '*'
+        required: true
+        schema:
+          $ref: '#/definitions/authRequest.LoginRequest'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "401":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"User Login"'
+      tags:
+      - '"Auth"'
+  /auth/logout:
+    post:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully logged out
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "401":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: (Token is invalid in the server. Token is not valid. Failed
+            to process request)
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"User Logout"'
+      tags:
+      - '"Auth"'
+  /auth/refresh:
+    post:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "401":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: (Token is invalid in the server. Token is not valid. Failed
+            to process request)
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"User Refresh Token"'
+      tags:
+      - '"Auth"'
+  /auth/register:
+    post:
+      parameters:
+      - description: User Register
+        in: body
+        name: '*'
+        required: true
+        schema:
+          $ref: '#/definitions/authRequest.RegisterRequest'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Register Success
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"User Register"'
+      tags:
+      - '"Auth"'
+swagger: "2.0"

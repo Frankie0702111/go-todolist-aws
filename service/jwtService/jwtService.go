@@ -1,7 +1,9 @@
 package jwtService
 
 import (
+	"fmt"
 	"go-todolist-aws/config"
+	"go-todolist-aws/utils/log"
 	"strconv"
 	"time"
 
@@ -26,12 +28,28 @@ func getSecretKey() string {
 	return secretKey
 }
 
-func (s *jwtService) GenerateToken(userID uint64, t time.Time) (string, error) {
+func ValidateToken(token string) (*jwt.Token, error) {
+	// Parse the token
+	return jwt.Parse(token, func(t_ *jwt.Token) (interface{}, error) {
+		// Check the signing method
+		if _, ok := t_.Method.(*jwt.SigningMethodHMAC); !ok {
+			// Return an error if the signing method isn't HMAC
+			log.Error("Unexpected signing method : " + t_.Header["alg"].(string))
+			return nil, fmt.Errorf("Unexpected signing method %v", t_.Header["alg"])
+		}
+		// Return the key
+		return []byte(getSecretKey()), nil
+	})
+}
+
+func (s *jwtService) GenerateToken(userID uint64, t int) (string, error) {
+	now := time.Now()
+	jwtTTL := time.Duration(t) * time.Second
 	claims := &jwtCustomClaim{
 		userID,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(t),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(now.Add(jwtTTL)),
+			IssuedAt:  jwt.NewNumericDate(now),
 			Issuer:    s.issuer,
 		},
 	}
@@ -42,10 +60,19 @@ func (s *jwtService) GenerateToken(userID uint64, t time.Time) (string, error) {
 		return "", err
 	}
 
-	_, setRedisErr := s.RedisRepository.Set("token"+strconv.FormatUint(userID, 10), token, time.Duration(config.JWTttl)*time.Second)
+	_, setRedisErr := s.RedisRepository.Set("token"+strconv.FormatUint(userID, 10), token, jwtTTL)
 	if setRedisErr != nil {
 		return "", setRedisErr
 	}
 
 	return token, nil
+}
+
+func (s *jwtService) Logout(userID uint64) error {
+	_, err := s.RedisRepository.Del("token" + strconv.FormatUint(userID, 10))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -19,12 +19,17 @@ migrate-test-down:
 
 # Unit test
 go-test:
-	make migrate-test-up;
-	go test -v repository/authRepository/authRepository_test.go -json > ./log/authRepository_test$(YMD).log;
-	go test -v service/authService/authService_test.go -json > ./log/authService_test$(YMD).log;
-	go test -v service/jwtService/jwtService_test.go -json > ./log/jwtService_test$(YMD).log;
-	go test -v controller/auth/authController_test.go -json > ./log/authController_test$(YMD).log;
+	@set -e; \
+	make migrate-test-up; \
+	go test -v repository/authRepository/authRepository_test.go -json > ./log/authRepository_test$(YMD).log; \
+	go test -v service/authService/authService_test.go -json > ./log/authService_test$(YMD).log; \
+	go test -v service/jwtService/jwtService_test.go -json > ./log/jwtService_test$(YMD).log; \
+	go test -v controller/auth/authController_test.go -json > ./log/authController_test$(YMD).log; \
 	make migrate-test-down;
+
+# Generate swagger
+swagger:
+	$(DOCKER) swag init
 
 # Compilation project
 build:

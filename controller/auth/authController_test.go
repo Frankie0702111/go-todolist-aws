@@ -9,10 +9,12 @@ import (
 	"go-todolist-aws/request/authRequest"
 	"go-todolist-aws/router"
 	"go-todolist-aws/router/authRouter"
+	"go-todolist-aws/utils/log"
 	"go-todolist-aws/utils/response"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
@@ -52,7 +54,8 @@ func setUp(t *testing.T) {
 	r = authRouter.GetRoute(r, db, rdb)
 }
 
-func performRequest(method string, path string, data interface{}) (*httptest.ResponseRecorder, error) {
+func performRequest(method string, path string, data interface{}, token interface{}) (*httptest.ResponseRecorder, error) {
+	log.Info("token", token)
 	// Structure data to JSON
 	reqBody, err := json.Marshal(data)
 	if err != nil {
@@ -65,6 +68,9 @@ func performRequest(method string, path string, data interface{}) (*httptest.Res
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	if token != nil {
+		req.Header.Set("Authorization", "Bearer "+fmt.Sprintf("%v", token))
+	}
 
 	// Response of the capture processor
 	w := httptest.NewRecorder()
@@ -94,7 +100,7 @@ func TestLogin_Success(t *testing.T) {
 		Password: password,
 	}
 
-	w, err := performRequest("POST", "/api/v1/auth/login", input)
+	w, err := performRequest("POST", "/api/v1/auth/login", input, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, w.Code)
 
@@ -129,13 +135,13 @@ func TestLogin_Failed(t *testing.T) {
 		Password: password,
 	}
 
-	w, err := performRequest("POST", "/api/v1/auth/login", input)
+	w, err := performRequest("POST", "/api/v1/auth/login", input, nil)
 	assert.NoError(t, err)
 	assert.NotEqual(t, http.StatusOK, w.Code)
 
 	input.Email = user.Email
 	input.Password = "12345678"
-	w, err = performRequest("POST", "/api/v1/auth/login", input)
+	w, err = performRequest("POST", "/api/v1/auth/login", input, nil)
 	assert.NoError(t, err)
 	assert.NotEqual(t, http.StatusOK, w.Code)
 
@@ -152,7 +158,7 @@ func TestRegister_Success(t *testing.T) {
 		Password: "password",
 	}
 
-	w, err := performRequest("POST", "/api/v1/auth/register", input)
+	w, err := performRequest("POST", "/api/v1/auth/register", input, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, w.Code)
 
@@ -183,10 +189,139 @@ func TestRegister_Failed(t *testing.T) {
 		Password: password,
 	}
 
-	w, err := performRequest("POST", "/api/v1/auth/register", input)
+	w, err := performRequest("POST", "/api/v1/auth/register", input, nil)
 	assert.NoError(t, err)
 	assert.NotEqual(t, http.StatusOK, w.Code)
 
 	createUser = db.Delete(&user)
 	assert.NoError(t, createUser.Error)
+}
+
+func TestRefreshToken_Success(t *testing.T) {
+	setUp(t)
+
+	user := model.User{
+		Username: "Test456",
+		Email:    "test456@test.com",
+		Password: "",
+	}
+	password := "password"
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
+	assert.NoError(t, err)
+
+	user.Password = string(hashPassword)
+	createUser := db.Create(&user)
+	assert.NoError(t, createUser.Error)
+
+	input := authRequest.LoginRequest{
+		Email:    user.Email,
+		Password: password,
+	}
+
+	// Get token by login
+	w, err := performRequest("POST", "/api/v1/auth/login", input, nil)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, w.Code)
+	log.Info("login w.Header", w.Header())
+	log.Info("login w.Body", w.Body)
+
+	loginResponse := &response.Response{}
+	loginResponseJSON := json.Unmarshal(w.Body.Bytes(), loginResponse)
+	assert.NoError(t, loginResponseJSON)
+	assert.Equal(t, "Login successfully", loginResponse.Message)
+
+	loginToken := loginResponse.Data.(map[string]interface{})["token"].(string)
+
+	// Request too fast, sleep 1 second
+	time.Sleep(1 * time.Second)
+
+	// Use the login token to refresh the token
+	w, err = performRequest("POST", "/api/v1/auth/refresh", "", loginToken)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, w.Code)
+	log.Info("refresh w.Header", w.Header())
+	log.Info("refresh w.Body", w.Body)
+
+	res := &response.Response{}
+	resJSON := json.Unmarshal(w.Body.Bytes(), res)
+	assert.NoError(t, resJSON)
+	assert.Equal(t, "Refresh token successfully", res.Message)
+
+	refreshToken := res.Data.(map[string]interface{})["token"].(string)
+	assert.NotEqual(t, loginToken, refreshToken)
+
+	createUser = db.Delete(&user)
+	assert.NoError(t, createUser.Error)
+}
+
+func TestRefreshToken_Failed(t *testing.T) {
+	setUp(t)
+
+	w, err := performRequest("POST", "/api/v1/auth/refresh", "", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpc3MiOiJnb2p3dCIsImV4cCI6MTY4NDUwNzcwOSwiaWF0IjoxNjg0NTA2ODA5fQ.EGO1So_CpdolmnEXBTjeDeHFRao0wEUTT4vd_dVkj48")
+	assert.NoError(t, err)
+	assert.NotEqual(t, http.StatusOK, w.Code)
+
+	res := &response.Response{}
+	resJSON := json.Unmarshal(w.Body.Bytes(), res)
+	assert.NoError(t, resJSON)
+	assert.Equal(t, "Token is not valid", res.Message)
+}
+
+func TestLogout_Success(t *testing.T) {
+	setUp(t)
+
+	user := model.User{
+		Username: "Test456",
+		Email:    "test456@test.com",
+		Password: "",
+	}
+	password := "password"
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
+	assert.NoError(t, err)
+
+	user.Password = string(hashPassword)
+	createUser := db.Create(&user)
+	assert.NoError(t, createUser.Error)
+
+	input := authRequest.LoginRequest{
+		Email:    user.Email,
+		Password: password,
+	}
+
+	w, err := performRequest("POST", "/api/v1/auth/login", input, nil)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	loginResponse := &response.Response{}
+	loginResponseJSON := json.Unmarshal(w.Body.Bytes(), loginResponse)
+	assert.NoError(t, loginResponseJSON)
+	assert.Equal(t, "Login successfully", loginResponse.Message)
+
+	loginToken := loginResponse.Data.(map[string]interface{})["token"].(string)
+	time.Sleep(1 * time.Second)
+
+	w, err = performRequest("POST", "/api/v1/auth/logout", "", loginToken)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	res := &response.Response{}
+	resJSON := json.Unmarshal(w.Body.Bytes(), res)
+	assert.NoError(t, resJSON)
+	assert.Equal(t, "Successfully logged out", res.Message)
+
+	createUser = db.Delete(&user)
+	assert.NoError(t, createUser.Error)
+}
+
+func TestLogout_Failed(t *testing.T) {
+	setUp(t)
+
+	w, err := performRequest("POST", "/api/v1/auth/logout", "", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpc3MiOiJnb2p3dCIsImV4cCI6MTY4NDUwNzcwOSwiaWF0IjoxNjg0NTA2ODA5fQ.EGO1So_CpdolmnEXBTjeDeHFRao0wEUTT4vd_dVkj48")
+	assert.NoError(t, err)
+	assert.NotEqual(t, http.StatusOK, w.Code)
+
+	res := &response.Response{}
+	resJSON := json.Unmarshal(w.Body.Bytes(), res)
+	assert.NoError(t, resJSON)
+	assert.Equal(t, "Token is not valid", res.Message)
 }
