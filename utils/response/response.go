@@ -19,6 +19,8 @@ const (
 	FailedToLogout                         = 401004
 	RecordNotFound                         = 401005
 	TooManyRequests                        = 429001
+	TokenBindingHasUnknownErrors           = 500001
+	DataBindingHasUnknownErrors            = 500002
 )
 
 var (
@@ -39,6 +41,8 @@ var (
 		401004: "Failed to logout.",
 		401005: "Record not found.",
 		429001: "Too many requests.",
+		500001: "Token binding has unknown errors.",
+		500002: "Data binding has unknown errors.",
 	}
 )
 
@@ -102,10 +106,11 @@ func ErrorsResponse(code int, message string, err string, data interface{}) Resp
 
 // ErrorResponse Returns an error response with the message given by the code
 func ErrorsResponseByCode(code int, message string, errCode int, data interface{}) Response {
+	splittedError := strings.Split(Messages[errCode], "\n")
 	return Response{
 		Code:    code,
 		Message: message,
-		Errors:  Messages[errCode],
+		Errors:  splittedError,
 		Data:    data,
 	}
 }

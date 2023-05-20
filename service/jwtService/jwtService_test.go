@@ -7,7 +7,6 @@ import (
 	"go-todolist-aws/service/jwtService"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/stretchr/testify/assert"
@@ -35,13 +34,51 @@ func TestGenerateToken_Success(t *testing.T) {
 
 	s := jwtService.New(rdb)
 	r := redisRepository.New(rdb)
-
 	userID := uint64(1)
-	token, err := s.GenerateToken(userID, time.Now().Add(time.Duration(config.JWTttl)*time.Second))
+	token, err := s.GenerateToken(userID, config.JWTttl)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
 
 	res, err := r.Get("token" + strconv.FormatUint(userID, 10))
 	assert.NoError(t, err)
 	assert.Equal(t, token, res)
+}
+
+func TestLogout_Success(t *testing.T) {
+	setUp(t)
+
+	s := jwtService.New(rdb)
+	r := redisRepository.New(rdb)
+	userID := uint64(1)
+	generateToken, err := s.GenerateToken(userID, config.JWTttl)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, generateToken)
+
+	deleteTokenErr := s.Logout(userID)
+	assert.NoError(t, deleteTokenErr)
+
+	res, err := r.Get("token" + strconv.FormatUint(userID, 10))
+	assert.Error(t, err)
+	assert.Equal(t, res, "")
+}
+
+func TestLogout_Failed(t *testing.T) {
+	setUp(t)
+
+	s := jwtService.New(rdb)
+	r := redisRepository.New(rdb)
+	userID := uint64(1)
+	generateToken, err := s.GenerateToken(userID, config.JWTttl)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, generateToken)
+
+	// Delete non-existing-key
+	deleteTokenErr := s.Logout(123)
+	// Confirm error as nil
+	assert.NoError(t, deleteTokenErr)
+
+	// The user information still exists and the user is not properly logged out
+	res, err := r.Get("token" + strconv.FormatUint(userID, 10))
+	assert.NoError(t, err)
+	assert.Equal(t, generateToken, res)
 }

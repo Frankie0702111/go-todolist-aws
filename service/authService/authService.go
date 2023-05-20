@@ -12,6 +12,17 @@ import (
 	"gorm.io/gorm"
 )
 
+func comparePassword(hashedPwd string, plainPassword []byte) bool {
+	byteHash := []byte(hashedPwd)
+	err := bcrypt.CompareHashAndPassword(byteHash, plainPassword)
+	if err != nil {
+		log.Error("Faild to compare password : " + err.Error())
+		return false
+	}
+
+	return true
+}
+
 func (s *authService) VerifyCredential(email string, password string) interface{} {
 	res := s.AuthRepository.VerifyCredential(email)
 	if v, ok := res.(model.User); ok {
@@ -45,15 +56,4 @@ func (s *authService) CreateUser(user authRequest.RegisterRequest) (model.User, 
 	}
 
 	return createUser, errors.New(response.Messages[response.EmailAlreadyExists])
-}
-
-func comparePassword(hashedPwd string, plainPassword []byte) bool {
-	byteHash := []byte(hashedPwd)
-	err := bcrypt.CompareHashAndPassword(byteHash, plainPassword)
-	if err != nil {
-		log.Error("Faild to compare password : " + err.Error())
-		return false
-	}
-
-	return true
 }

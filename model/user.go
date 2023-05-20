@@ -14,6 +14,9 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type Token struct {
-	Token string `json:"token"`
+type TokenInfo struct {
+	UserID  uint64 `json:"user_id"`
+	IssUser string `json:"iss_user"`
+	Token   string `json:"token"`
+	Valid   bool   `json:"valid"`
 }

@@ -2,13 +2,13 @@ package jwtService
 
 import (
 	"go-todolist-aws/repository/redisRepository"
-	"time"
 
 	"github.com/go-redis/redis/v8"
 )
 
 type JwtService interface {
-	GenerateToken(userID uint64, t time.Time) (string, error)
+	GenerateToken(userID uint64, t int) (string, error)
+	Logout(userID uint64) error
 }
 
 type jwtService struct {
