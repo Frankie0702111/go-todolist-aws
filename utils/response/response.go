@@ -21,6 +21,7 @@ const (
 	TooManyRequests                        = 429001
 	TokenBindingHasUnknownErrors           = 500001
 	DataBindingHasUnknownErrors            = 500002
+	DuplicateCreatedData                   = 500003
 )
 
 var (
@@ -43,6 +44,7 @@ var (
 		429001: "Too many requests.",
 		500001: "Token binding has unknown errors.",
 		500002: "Data binding has unknown errors.",
+		500003: "Duplicate created data.",
 	}
 )
 

@@ -41,7 +41,7 @@ func main() {
 
 	r := router.Default()
 	r = authRouter.GetRoute(r, db, rdb)
-	r = categoryRouter.GetRoute(r, db)
+	r = categoryRouter.GetRoute(r, db, rdb)
 	swagger := ginSwagger.URL(fmt.Sprintf("http://localhost:9753/api/swagger/doc.json"))
 	r.GET("api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swagger))
 
