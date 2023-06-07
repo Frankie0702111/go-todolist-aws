@@ -25,8 +25,26 @@ func (s *categoryService) CreateCategory(category categoryRequest.CategoryCreate
 			}
 
 			return res, nil
+		} else {
+			return createCategory, err
 		}
 	}
 
 	return createCategory, errors.New(response.Messages[response.DuplicateCreatedData])
+}
+
+func (s *categoryService) UpdateCategory(category categoryRequest.CategoryCreateOrUpdateRequest, id int64) (model.Category, error) {
+	categoryToUpdate := model.Category{}
+	if err := smapping.FillStruct(&categoryToUpdate, smapping.MapFields(&category)); err != nil {
+		return categoryToUpdate, err
+	}
+
+	categoryToUpdate.ID = id
+	res, err := s.CategoryRepository.UpdateCategory(categoryToUpdate)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+
 }

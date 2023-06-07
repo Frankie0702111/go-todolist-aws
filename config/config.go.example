@@ -10,23 +10,23 @@ const (
 	SourceDataBase = "golang_aws_db"
 )
 
-// Test Gorm
-const (
-	TestSourceHost1 = "127.0.0.1"
-	TestSourcePort1 = "3308" // 3308 This port is docker out port.
-	TestSourceHost2 = "127.0.0.1"
-	TestSourcePort2 = "6381" // 6381 This port is docker out port.
-)
-
 // Redis
 const (
 	RedisHost     = "redis"
 	RedisPassword = ""
-	RedisPort     = 6379
+	RedisPort     = "6379"
 )
 
 // JWT
 const (
 	JWTttl       = 900
 	JWTSecretKey = "learnGolangJWTToken"
+)
+
+// AWS S3
+const (
+	AWS_REGION            = ""
+	AWS_BUCKET            = ""
+	AWS_ACCESS_KEY_ID     = ""
+	AWS_SECRET_ACCESS_KEY = ""
 )

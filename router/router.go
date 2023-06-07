@@ -1,11 +1,18 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"go-todolist-aws/middleware"
+
+	"github.com/gin-gonic/gin"
+)
 
 func Default() *gin.Engine {
 	gin.SetMode(gin.DebugMode)
 
 	router := gin.New()
+	router.Use(middleware.CORS())
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
 
 	test := router.Group("api/v1/test")
 	{
@@ -15,11 +22,6 @@ func Default() *gin.Engine {
 			})
 		})
 	}
-
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
-
-	// CORS
 
 	return router
 }

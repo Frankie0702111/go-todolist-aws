@@ -23,6 +23,32 @@ definitions:
     - password
     - username
     type: object
+  categoryRequest.CategoryCreateOrUpdateRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  response.PageResponse:
+    properties:
+      code:
+        type: integer
+      currentPage:
+        type: integer
+      data:
+        type: object
+      errors:
+        type: object
+      message:
+        type: string
+      pageLimit:
+        type: integer
+      pages:
+        description: Total page
+        type: integer
+      total:
+        description: Data count
+        type: integer
+    type: object
   response.Response:
     properties:
       code:
@@ -181,4 +207,507 @@ paths:
       summary: '"User Register"'
       tags:
       - '"Auth"'
+  /category:
+    get:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Category ID
+        in: query
+        name: id
+        type: integer
+      - description: Category Name
+        in: query
+        maxLength: 100
+        name: name
+        type: string
+      - default: 1
+        description: Page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - default: 5
+        description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get category list
+          schema:
+            $ref: '#/definitions/response.PageResponse'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Category list"'
+      tags:
+      - '"Category"'
+    post:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Create category
+        in: body
+        name: '*'
+        required: true
+        schema:
+          $ref: '#/definitions/categoryRequest.CategoryCreateOrUpdateRequest'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Create Success
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Create category"'
+      tags:
+      - '"Category"'
+  /category/{id}:
+    delete:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete Success
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "404":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Delete a single category"'
+      tags:
+      - '"Category"'
+    get:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Record not found || Successfully get category
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Get a single category"'
+      tags:
+      - '"Category"'
+    patch:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update category
+        in: body
+        name: '*'
+        required: true
+        schema:
+          $ref: '#/definitions/categoryRequest.CategoryCreateOrUpdateRequest'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Update Success
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "404":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Update category"'
+      tags:
+      - '"Category"'
+  /task:
+    get:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Task ID
+        in: formData
+        name: id
+        type: integer
+      - description: User ID
+        in: formData
+        name: user_id
+        type: integer
+      - description: Title
+        in: formData
+        maxLength: 100
+        name: title
+        type: string
+      - description: 'Specify Datetime (DateTime: 2006-01-02 15:04:05)'
+        in: formData
+        name: specify_datetime
+        type: string
+      - description: Is Specify Time
+        in: formData
+        name: is_specify_time
+        type: boolean
+      - description: Is Complete
+        in: formData
+        name: is_complete
+        type: boolean
+      - default: 1
+        description: Page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - default: 5
+        description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get task list
+          schema:
+            $ref: '#/definitions/response.PageResponse'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Task list"'
+      tags:
+      - '"Task"'
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User ID
+        in: formData
+        name: user_id
+        required: true
+        type: integer
+      - description: Category ID
+        in: formData
+        name: category_id
+        required: true
+        type: integer
+      - description: Title
+        in: formData
+        maxLength: 100
+        name: title
+        required: true
+        type: string
+      - description: Note
+        in: formData
+        name: note
+        type: string
+      - description: Url
+        in: formData
+        name: url
+        type: string
+      - description: Image
+        in: formData
+        name: image
+        type: file
+      - description: 'Specify Datetime (DateTime: 2006-01-02 15:04:05)'
+        in: formData
+        name: specify_datetime
+        type: string
+      - description: Is Specify Time
+        in: formData
+        name: is_specify_time
+        type: boolean
+      - default: 1
+        description: Priority
+        enum:
+        - 1
+        - 2
+        - 3
+        in: formData
+        name: priority
+        required: true
+        type: integer
+      - default: false
+        description: Is Complete
+        in: formData
+        name: is_complete
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Create Success
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Create task"'
+      tags:
+      - '"Task"'
+  /task/{id}:
+    delete:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Delete Success
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "404":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Delete a single task"'
+      tags:
+      - '"Task"'
+    get:
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Record not found || Successfully get task
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Get a single task"'
+      tags:
+      - '"Task"'
+    patch:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - default: Bearer
+        description: example:Bearer token (Bearer+space+token).
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category ID
+        in: formData
+        name: category_id
+        type: integer
+      - description: Title
+        in: formData
+        maxLength: 100
+        name: title
+        type: string
+      - description: Note
+        in: formData
+        name: note
+        type: string
+      - description: Url
+        in: formData
+        name: url
+        type: string
+      - description: Image
+        in: formData
+        name: image
+        type: file
+      - description: 'Specify Datetime (DateTime: 2006-01-02 15:04:05)'
+        in: formData
+        name: specify_datetime
+        type: string
+      - description: Is Specify Time
+        in: formData
+        name: is_specify_time
+        type: boolean
+      - description: Priority
+        enum:
+        - 1
+        - 2
+        - 3
+        in: formData
+        name: priority
+        required: true
+        type: integer
+      - description: Is Complete
+        in: formData
+        name: is_complete
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Update Success
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "400":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "404":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+        "500":
+          description: Failed to process request
+          schema:
+            $ref: '#/definitions/response.Response'
+            type: object
+      summary: '"Update a single task"'
+      tags:
+      - '"Task"'
 swagger: "2.0"

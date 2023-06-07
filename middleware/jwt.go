@@ -18,14 +18,14 @@ func Verify(r redisRepository.RedisRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
-			response := response.ErrorsResponseByCode(http.StatusBadRequest, "Failed to process request", response.TokenInvalid, nil)
+			response := response.ErrorsResponseByCode(response.TokenInvalid, "Failed to process request", response.TokenInvalid, nil)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
 
 		splitToken := strings.Split(authHeader, "Bearer ")
 		if len(splitToken) != 2 {
-			response := response.ErrorsResponseByCode(http.StatusBadRequest, "Failed to process request", response.BearerTokenNotInProperFormat, nil)
+			response := response.ErrorsResponseByCode(response.BearerTokenNotInProperFormat, "Failed to process request", response.BearerTokenNotInProperFormat, nil)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
@@ -63,7 +63,7 @@ func Verify(r redisRepository.RedisRepository) gin.HandlerFunc {
 
 		// Check if the token is the same as redis (for user logout)
 		if tokenInfo.Token != redisToken {
-			response := response.ErrorsResponseByCode(http.StatusBadRequest, "Token is invalid in the server", response.TokenInvalid, nil)
+			response := response.ErrorsResponseByCode(response.TokenInvalid, "Token is invalid in the server", response.TokenInvalid, nil)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}

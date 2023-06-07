@@ -21,10 +21,12 @@ migrate-test-down:
 go-test:
 	@set -e; \
 	make migrate-test-up; \
+	$(DOCKER) go env -w CGO_ENABLED=0; \
 	$(DOCKER) go test -v repository/authRepository/authRepository_test.go -json > ./log/authRepository_test$(YMD).log; \
 	$(DOCKER) go test -v service/authService/authService_test.go -json > ./log/authService_test$(YMD).log; \
 	$(DOCKER) go test -v service/jwtService/jwtService_test.go -json > ./log/jwtService_test$(YMD).log; \
 	$(DOCKER) go test -v controller/auth/authController_test.go -json > ./log/authController_test$(YMD).log; \
+	$(DOCKER) go env -w CGO_ENABLED=1; \
 	make migrate-test-down;
 
 # Generate swagger

@@ -52,6 +52,8 @@ func (s *authService) CreateUser(user authRequest.RegisterRequest) (model.User, 
 			}
 
 			return res, nil
+		} else {
+			return createUser, err
 		}
 	}
 

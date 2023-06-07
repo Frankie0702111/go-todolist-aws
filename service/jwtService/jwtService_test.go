@@ -19,7 +19,7 @@ var (
 
 func setUp(t *testing.T) {
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", config.TestSourceHost2, config.TestSourcePort2),
+		Addr:     fmt.Sprintf("%s:%s", config.RedisHost, config.RedisPort),
 		Password: config.RedisPassword,
 		DB:       0,
 	})
