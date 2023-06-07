@@ -47,7 +47,7 @@ git clone https://github.com/Frankie0702111/go-todolist-aws.git
 cd go-todolist-aws/config
 cp config.go.example config.go
 
-# Set up basic information, such as database, Google Oauth, JWT
+# Set up basic information, such as database, AWS, JWT
 vim config.go
 ```
 
