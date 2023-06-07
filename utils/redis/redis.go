@@ -12,7 +12,7 @@ func InitRedis() (*redis.Client, error) {
 	log.Info("Testing Golang Redis")
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:6379", config.RedisHost),
+		Addr:     fmt.Sprintf("%s:%s", config.RedisHost, config.RedisPort),
 		Password: config.RedisPassword, // no password set
 		DB:       0,                    // use default DB
 	})

@@ -33,7 +33,6 @@ func New(db *gorm.DB, rdb *redis.Client) AuthController {
 	}
 }
 
-// Login is a function for user login
 // @Summary "User Login"
 // @Tags	"Auth"
 // @Version 1.0
@@ -67,12 +66,11 @@ func (c *authController) Login(ctx *gin.Context) {
 		return
 	}
 
-	response := response.ErrorsResponseByCode(http.StatusUnauthorized, "Failed to process request", response.InvalidCredential, nil)
+	response := response.ErrorsResponseByCode(response.InvalidCredential, "Failed to process request", response.InvalidCredential, nil)
 	ctx.JSON(http.StatusUnauthorized, response)
 	return
 }
 
-// Register is a function for user register
 // @Summary "User Register"
 // @Tags	"Auth"
 // @Version 1.0
@@ -93,7 +91,7 @@ func (c *authController) Register(ctx *gin.Context) {
 	createUser, err := c.AuthService.CreateUser(input)
 	if err != nil {
 		if err.Error() == response.Messages[response.EmailAlreadyExists] {
-			response := response.ErrorsResponseByCode(http.StatusInternalServerError, "Failed to process request", response.EmailAlreadyExists, nil)
+			response := response.ErrorsResponseByCode(response.EmailAlreadyExists, "Failed to process request", response.EmailAlreadyExists, nil)
 			ctx.JSON(http.StatusInternalServerError, response)
 			return
 		}
@@ -107,7 +105,6 @@ func (c *authController) Register(ctx *gin.Context) {
 	return
 }
 
-// RefreshToken is a function for token refresh
 // @Summary "User Refresh Token"
 // @Tags	"Auth"
 // @Version 1.0
@@ -121,14 +118,14 @@ func (c *authController) Register(ctx *gin.Context) {
 func (c *authController) RefreshToken(ctx *gin.Context) {
 	tokenInfo, exists := ctx.Get("token_info")
 	if !exists {
-		response := response.ErrorsResponseByCode(http.StatusInternalServerError, "Token is not valid", response.TokenBindingHasUnknownErrors, nil)
+		response := response.ErrorsResponseByCode(response.TokenBindingHasUnknownErrors, "Token is not valid", response.TokenBindingHasUnknownErrors, nil)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
 	userTokenInfo, ok := tokenInfo.(*model.TokenInfo)
 	if !ok {
-		response := response.ErrorsResponseByCode(http.StatusInternalServerError, "Token is not valid", response.DataBindingHasUnknownErrors, nil)
+		response := response.ErrorsResponseByCode(response.DataBindingHasUnknownErrors, "Token is not valid", response.DataBindingHasUnknownErrors, nil)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
@@ -145,7 +142,6 @@ func (c *authController) RefreshToken(ctx *gin.Context) {
 	return
 }
 
-// Logout is a function for user logout
 // @Summary "User Logout"
 // @Tags	"Auth"
 // @Version 1.0
@@ -159,14 +155,14 @@ func (c *authController) RefreshToken(ctx *gin.Context) {
 func (c *authController) Logout(ctx *gin.Context) {
 	tokenInfo, exists := ctx.Get("token_info")
 	if !exists {
-		response := response.ErrorsResponseByCode(http.StatusInternalServerError, "Token is not valid", response.TokenBindingHasUnknownErrors, nil)
+		response := response.ErrorsResponseByCode(response.TokenBindingHasUnknownErrors, "Token is not valid", response.TokenBindingHasUnknownErrors, nil)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
 	userTokenInfo, ok := tokenInfo.(*model.TokenInfo)
 	if !ok {
-		response := response.ErrorsResponseByCode(http.StatusInternalServerError, "Token is not valid", response.DataBindingHasUnknownErrors, nil)
+		response := response.ErrorsResponseByCode(response.DataBindingHasUnknownErrors, "Token is not valid", response.DataBindingHasUnknownErrors, nil)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}

@@ -22,6 +22,7 @@ const (
 	TokenBindingHasUnknownErrors           = 500001
 	DataBindingHasUnknownErrors            = 500002
 	DuplicateCreatedData                   = 500003
+	DuplicatedTitle                        = 500004
 )
 
 var (
@@ -45,6 +46,7 @@ var (
 		500001: "Token binding has unknown errors.",
 		500002: "Data binding has unknown errors.",
 		500003: "Duplicate created data.",
+		500004: "Duplicated title.",
 	}
 )
 

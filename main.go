@@ -6,6 +6,7 @@ import (
 	"go-todolist-aws/router"
 	"go-todolist-aws/router/authRouter"
 	"go-todolist-aws/router/categoryRouter"
+	"go-todolist-aws/router/taskRouter"
 	"go-todolist-aws/utils/gorm"
 	"go-todolist-aws/utils/log"
 	"go-todolist-aws/utils/redis"
@@ -28,12 +29,13 @@ func main() {
 	db, err := gorm.InitMySQL()
 	if err != nil {
 		log.Error(err)
-		return
+		panic(err)
 	}
 
-	rdb, rerr := redis.InitRedis()
-	if rerr != nil {
-		log.Error(rerr)
+	rdb, rErr := redis.InitRedis()
+	if rErr != nil {
+		log.Error(rErr)
+		panic(rErr)
 	}
 
 	defer gorm.Close(db)
@@ -42,6 +44,7 @@ func main() {
 	r := router.Default()
 	r = authRouter.GetRoute(r, db, rdb)
 	r = categoryRouter.GetRoute(r, db, rdb)
+	r = taskRouter.GetRoute(r, db, rdb)
 	swagger := ginSwagger.URL(fmt.Sprintf("http://localhost:9753/api/swagger/doc.json"))
 	r.GET("api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, swagger))
 

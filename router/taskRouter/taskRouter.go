@@ -1,7 +1,7 @@
-package categoryRouter
+package taskRouter
 
 import (
-	"go-todolist-aws/controller/category"
+	"go-todolist-aws/controller/task"
 	"go-todolist-aws/middleware"
 	"go-todolist-aws/repository/redisRepository"
 
@@ -11,16 +11,16 @@ import (
 )
 
 func GetRoute(r *gin.Engine, db *gorm.DB, rdb *redis.Client) *gin.Engine {
-	controller := category.New(db)
+	controller := task.New(db)
 	redisRepository := redisRepository.New(rdb)
 
 	auth := r.Group("api/v1", middleware.Verify(redisRepository))
 	{
-		auth.POST("/category", controller.Create)
-		auth.GET("/category", controller.GetByList)
-		auth.GET("/category/:id", controller.Get)
-		auth.PATCH("/category/:id", controller.Update)
-		auth.DELETE("/category/:id", controller.Delete)
+		auth.POST("/task", controller.Create)
+		auth.GET("/task", controller.GetByList)
+		auth.GET("/task/:id", controller.Get)
+		auth.PATCH("/task/:id", controller.Update)
+		auth.DELETE("/task/:id", controller.Delete)
 	}
 
 	return r

@@ -18,7 +18,7 @@ var (
 )
 
 func setUp(t *testing.T) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s_test?charset=utf8mb4&parseTime=True&loc=Local", config.SourceUser, config.SourcePassword, config.TestSourceHost1, config.TestSourcePort1, config.SourceDataBase)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s_test?charset=utf8mb4&parseTime=True&loc=Local", config.SourceUser, config.SourcePassword, config.SourceHost, config.SourcePort, config.SourceDataBase)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("Failed to connect database: %v", err)

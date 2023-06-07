@@ -34,14 +34,14 @@ var (
 func setUp(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s_test?charset=utf8mb4&parseTime=True&loc=Local", config.SourceUser, config.SourcePassword, config.TestSourceHost1, config.TestSourcePort1, config.SourceDataBase)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s_test?charset=utf8mb4&parseTime=True&loc=Local", config.SourceUser, config.SourcePassword, config.SourceHost, config.SourcePort, config.SourceDataBase)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("Failed to connect database: %v", err)
 	}
 
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", config.TestSourceHost2, config.TestSourcePort2),
+		Addr:     fmt.Sprintf("%s:%s", config.RedisHost, config.RedisPort),
 		Password: config.RedisPassword,
 		DB:       0,
 	})

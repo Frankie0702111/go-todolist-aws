@@ -10,6 +10,7 @@ import (
 
 type CategoryService interface {
 	CreateCategory(category categoryRequest.CategoryCreateOrUpdateRequest) (model.Category, error)
+	UpdateCategory(category categoryRequest.CategoryCreateOrUpdateRequest, id int64) (model.Category, error)
 }
 
 type categoryService struct {

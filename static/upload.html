@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="UTF-8">
+		<title>Submit Task Form</title>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#submit-form").submit(function(e){
+					e.preventDefault();
+					let formData = new FormData(this);
+					$.ajax({
+						url: "http://127.0.0.1:9753/api/v1/task",
+						type: "POST",
+						data: formData,
+						headers: {
+							'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpc3MiOiJnb2p3dCIsImV4cCI6MTY4NjIwODEyOSwiaWF0IjoxNjg2MTE4MTI5fQ.TgC-Rcx3JQKFI17H7LMYr3b40XWmnJR34BTdHhFbv8Q',
+						},
+						processData: false,
+						contentType: false,
+						success: function(response){
+							alert("Success");
+						},
+						error: function(xhr, status, error){
+							alert("Failed");
+						}
+					});
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<h1>Submit Task Form</h1>
+		<form id="submit-form" enctype="multipart/form-data">
+			<label>User ID:</label>
+			<input type="text" name="user_id" value=1><br><br>
+			
+			<label>Category ID:</label>
+			<input type="text" name="category_id" value=1><br><br>
+			
+			<label>Title:</label>
+			<input type="text" name="title" value="Test-reminder"><br><br>
+			
+			<label>Priority:</label>
+			<input type="text" name="priority" value=1><br><br>
+			
+			<label>Image:</label>
+			<input type="file" name="image"><br><br>
+			
+			<input type="submit" value="Submit">
+		</form>
+	</body>
+</html>
