@@ -23,7 +23,7 @@ This project will use Gin, GORM, MySQL (RDS), Redis (EC2), api-gateway, Lambda, 
     - [Postman](https://www.postman.com/downloads/)
 
 # Project plugins
-- [AWS sdk for go v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2)
+- [AWS SDK for go v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2)
 - [AWS api-gateway](https://github.com/apex/gateway)
 - [Crypto](https://pkg.go.dev/golang.org/x/crypto)
 - [Gin](https://github.com/gin-gonic/gin)
@@ -84,12 +84,12 @@ make swagger
 ```
 - [Swagger API doc](http://localhost:9753/api/swagger/index.html)
 
-## 6.Test authentication example
+## 6.Demo : Run authentication unit and integration tests 
 ```bash
 make go-test
 ```
 
-## 7.Build golang project for aws lambda and compress to zip
+## 7.Compile the golang project into a binary and compress it into a zip file for the purpose of upload to aws lambda
 ```bash
 make build
 ```
