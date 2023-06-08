@@ -8,7 +8,7 @@ type Task struct {
 	ID              int64      `json:"id"`
 	UserID          int64      `json:"user_id"`
 	CategoryID      int64      `json:"category_id"`
-	Category        Category   `gorm:"foreignkey:CategoryID;references:ID" json:"category,omitempty"`
+	Category        *Category  `gorm:"foreignkey:CategoryID;references:ID" json:"category"`
 	Title           string     `json:"title"`
 	Note            string     `json:"note"`
 	Url             string     `json:"url"`
