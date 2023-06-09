@@ -42,19 +42,15 @@ This project will use Gin, GORM, MySQL (RDS), Redis (EC2), api-gateway, Lambda, 
 git clone https://github.com/Frankie0702111/go-todolist-aws.git
 ```
 
-## 2.Generate config and set up environment
+## 2.Set up Docker information, such as database, Redis, Server
 ```bash
-cd go-todolist-aws/config
-cp config.go.example config.go
-
-# Set up basic information, such as database, AWS, JWT
-vim config.go
+cd /go-todolist-aws
+cp .env.example .env
+vim .env
 ```
 
 ## 3.Build docker image and start
 ```bash
-cd ../go-todolist-aws
-
 # Create docker image
 docker compose build --no-cache
 
@@ -65,7 +61,14 @@ docker compose up -d
 docker compose stop
 ```
 
-## 4.Generate db migrations
+## 4.Set up basic information, such as database, Redis, AWS, JWT
+```bash
+cd /config
+cp config.go.example config.go
+vim config.go
+```
+
+## 5.Generate db migrations
 ```bash
 # Up all migration
 make migrate-up
@@ -78,18 +81,18 @@ make migrate-up number=1
 make migrate-down number=1
 ```
 
-## 5.Build Swagger API documentation
+## 6.Build Swagger API documentation
 ```bash
 make swagger
 ```
 - [Swagger API doc](http://localhost:9753/api/swagger/index.html)
 
-## 6.Demo : Run authentication unit and integration tests 
+## 7.Demo : Run authentication unit and integration tests 
 ```bash
 make go-test
 ```
 
-## 7.Compile the golang project into a binary and compress it into a zip file for the purpose of upload to aws lambda
+## 8.Compile the golang project into a binary and compress it into a zip file for the purpose of upload to aws lambda
 ```bash
 make build
 ```
