@@ -11,7 +11,7 @@ import (
 
 type TaskService interface {
 	CreateTask(task taskRequest.TaskCreateRequest) (model.Task, error)
-	UpdateTask(task taskRequest.TaskUpdateRequest, old_task model.Task) (model.Task, error)
+	UpdateTask(task taskRequest.TaskUpdateRequest, oldTask model.Task) (model.Task, error)
 	DeleteTask(task model.Task) error
 }
 
