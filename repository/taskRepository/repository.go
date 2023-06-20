@@ -14,7 +14,7 @@ type TaskRepository interface {
 	GetTask(id int64) (model.Task, error)
 	UpdateTask(task model.Task) (model.Task, error)
 	DeleteTask(id int64) error
-	FindByTitle(user_id int64, title string) (model.Task, error)
+	FindByTitle(userID int64, title string) (model.Task, error)
 }
 
 type taskRepository struct {

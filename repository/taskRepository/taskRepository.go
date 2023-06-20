@@ -76,9 +76,9 @@ func (r *taskRepository) DeleteTask(id int64) error {
 	return nil
 }
 
-func (r *taskRepository) FindByTitle(user_id int64, title string) (model.Task, error) {
+func (r *taskRepository) FindByTitle(userID int64, title string) (model.Task, error) {
 	var task model.Task
-	if res := r.db.Where("user_id = ? AND title = ?", user_id, title).Take(&task); res.Error != nil {
+	if res := r.db.Where("user_id = ? AND title = ?", userID, title).Take(&task); res.Error != nil {
 		return task, res.Error
 	}
 

@@ -61,17 +61,17 @@ func (s *taskService) CreateTask(task taskRequest.TaskCreateRequest) (model.Task
 	return taskToCteate, errors.New(response.Messages[response.DuplicateCreatedData])
 }
 
-func (s *taskService) UpdateTask(task taskRequest.TaskUpdateRequest, old_task model.Task) (model.Task, error) {
+func (s *taskService) UpdateTask(task taskRequest.TaskUpdateRequest, oldTask model.Task) (model.Task, error) {
 	taskToUpdate := model.Task{}
 	if err := smapping.FillStruct(&taskToUpdate, smapping.MapFields(&task)); err != nil {
 		return taskToUpdate, err
 	}
 
-	checkTitle, _ := s.TaskRepository.FindByTitle(old_task.UserID, task.Title)
-	if (task.Title != checkTitle.Title) || ((old_task.ID == checkTitle.ID) && (task.Title == checkTitle.Title)) {
+	checkTitle, _ := s.TaskRepository.FindByTitle(oldTask.UserID, task.Title)
+	if (task.Title != checkTitle.Title) || ((oldTask.ID == checkTitle.ID) && (task.Title == checkTitle.Title)) {
 		if task.Image != nil {
-			if task.Image.Filename != old_task.Img {
-				if err := s.S3Repository.FileRemove(old_task.Img, old_task.ImgUuid); err != nil {
+			if task.Image.Filename != oldTask.Img {
+				if err := s.S3Repository.FileRemove(oldTask.Img, oldTask.ImgUuid); err != nil {
 					return taskToUpdate, err
 				}
 			}
@@ -91,7 +91,7 @@ func (s *taskService) UpdateTask(task taskRequest.TaskUpdateRequest, old_task mo
 			taskToUpdate.ImgUuid = uuidV4Ojb.String()
 		}
 
-		taskToUpdate.ID = old_task.ID
+		taskToUpdate.ID = oldTask.ID
 		res, err := s.TaskRepository.UpdateTask(taskToUpdate)
 		if err != nil {
 			return res, err
