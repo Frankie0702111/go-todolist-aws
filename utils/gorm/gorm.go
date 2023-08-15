@@ -36,9 +36,6 @@ func InitMySQL() (*gorm.DB, error) {
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	// SetConnIdleTime sets the maximum amount of time a connection may be reused.
-	sqlDB.SetConnMaxLifetime(10 * time.Hour)
-
 	// Migrate the schema
 	// db.AutoMigrate(&model.User{})
 
