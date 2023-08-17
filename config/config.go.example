@@ -10,6 +10,14 @@ const (
 	SourceDataBase = "golang_aws_db"
 )
 
+// Test Gorm
+const (
+	TestSourceHost1 = "127.0.0.1"
+	TestSourcePort1 = "3306"
+	TestSourceHost2 = "127.0.0.1"
+	TestSourcePort2 = "6379"
+)
+
 // Redis
 const (
 	RedisHost     = "redis"
